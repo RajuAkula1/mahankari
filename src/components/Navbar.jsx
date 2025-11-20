@@ -58,7 +58,6 @@ const Navbar = () => {
               className="relative group hover:text-(--color-accent) hover:bg-white/5 space-y-1 px-4 py-2 "
             >
               <Link
-                to="/collections/sarees"
                 onClick={openDropdown}
                 className="flex justify-between gap-1 items-center m-0"
               >

@@ -26,6 +26,8 @@ import ToggleSwitch from "./components/ToggleSwitch";
 import Trending from "./components/Trending";
 import ZoomCursor from "./components/ZoomCursor";
 
+import { useProductContext } from "./context/ProductContext";
+
 export {
   AccountOverview,
   Cart,
@@ -53,4 +55,5 @@ export {
   ToggleSwitch,
   Trending,
   ZoomCursor,
+  useProductContext,
 };

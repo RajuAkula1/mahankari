@@ -6,8 +6,8 @@ const ProductCard = ({ item, onAddToCart }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const totalImages = item.images?.length || 0;
-  const productTitle = item.product.split(" ").join("-").toLowerCase();
-  const productInfo = `${productTitle}-${item.id.toLowerCase()}`;
+  const productTitle = item?.product?.split(" ")?.join("-")?.toLowerCase();
+  const productInfo = `${productTitle}-${item?.id?.toLowerCase()}`;
 
   // Auto image change when hovered
   useEffect(() => {

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "@mui/material/Slider";
 import { styled } from "@mui/material/styles";
 
-// 🎨 Brand color (replace with your theme color)
-const brandColor = "#481133"; // Tailwind gray-700 or your brand primary
+import { useProductContext } from "../context/ProductContext";
+import { maxPrice, minPrice } from "./constants/constants";
+
+const brandColor = "#481133";
 
 // Styled MUI Slider
 const BrandSlider = styled(Slider)({
@@ -31,11 +33,22 @@ const BrandSlider = styled(Slider)({
 
 const RangeSlider = ({ min = 0, max = 10000, step = 100, onChange }) => {
   const [value, setValue] = useState([min, max / 2]);
+  const { isRangeSelected, setIsRangeSelected } = useProductContext();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+
     if (onChange) onChange(newValue);
   };
+
+  const { selectedRanges } = isRangeSelected;
+  useEffect(() => {
+    setIsRangeSelected({
+      rangeSelected:
+        minPrice !== selectedRanges[0] || maxPrice !== selectedRanges[1],
+      selectedRanges: value,
+    });
+  }, [value]);
 
   return (
     <div className="w-full">

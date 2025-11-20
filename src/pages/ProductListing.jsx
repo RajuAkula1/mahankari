@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+import { useProductContext } from "../context/ProductContext";
+
 import ToggleSwitch from "../components/ToggleSwitch";
 import ProductCard from "../components/ProductCard";
 import RangeSlider from "../components/RangeSlider";
@@ -9,13 +11,14 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-import * as allproductsData from "../components/ProductsData";
 import PageNotFound from "./PageNotFound";
-import FabricFilter from "../components/FabricFilter";
-import FilterChips from "../components/FilterChips";
+
+import { maxPrice, minPrice } from "../components/constants/constants";
 
 const ProductListing = () => {
   const { productsListing } = useParams();
+  const { productsData, filteredFabrics, setFilteredFabrics, isRangeSelected } =
+    useProductContext();
 
   let categoryurl = "";
   productsListing.split("-").forEach((categoryword, idx) => {
@@ -28,14 +31,24 @@ const ProductListing = () => {
   });
 
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState(
-    allproductsData[categoryurl]
+  const [selectedProducts, setSelectedProducts] = useState(
+    productsData[categoryurl]
   );
-  const [filteredFabrics, setFilteredFabrics] = useState([]);
 
   useEffect(() => {
-    setFilteredProducts(allproductsData[categoryurl]);
-  }, [productsListing]);
+    const { rangeSelected, selectedRanges } = isRangeSelected;
+    if (rangeSelected) {
+      const fabricFilteredProducts = productsData[categoryurl].filter(
+        (product) => {
+          return (
+            product.price.split(",").join("") >= selectedRanges[0] &&
+            product.price.split(",").join("") <= selectedRanges[1]
+          );
+        }
+      );
+      setSelectedProducts(fabricFilteredProducts);
+    }
+  }, [productsListing, productsData, categoryurl, isRangeSelected]);
 
   const [sortby, setSortBy] = useState("");
 
@@ -46,29 +59,14 @@ const ProductListing = () => {
   const onHandleInStock = (isInStockOnly) => {
     setInStockOnly(isInStockOnly);
     const inStockProducts = isInStockOnly
-      ? allproductsData[categoryurl].filter((product) => product.quantity > 0)
-      : allproductsData[categoryurl];
+      ? productsData[categoryurl].filter((product) => product.quantity > 0)
+      : productsData[categoryurl];
 
-    setFilteredProducts(inStockProducts);
-  };
-  //   console.log("all sarees", allproductsData[categoryurl]);
-
-  const onFabricFilter = (selectedFabrics) => {
-    if (selectedFabrics.length === 0) {
-      setFilteredProducts(allproductsData[categoryurl]);
-      setFilteredFabrics([]);
-      return;
-    }
-    setFilteredFabrics([...selectedFabrics]);
-    const fabricFilteredProducts = allproductsData[categoryurl].filter(
-      (product) => selectedFabrics.includes(product.fabric)
-    );
-    setFilteredProducts(fabricFilteredProducts);
+    setFilteredFabrics(inStockProducts);
   };
 
-  return filteredProducts && filteredProducts.length ? (
+  return productsData[categoryurl] ? (
     <div className="min-h-screen px-6 py-16 flex flex-col items-center">
-      <FilterChips selectedFabrics={filteredFabrics} />
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* ---------- Sidebar Filters ---------- */}
         <aside className="bg-white p-5 h-fit border border-transparent border-r-gray-300">
@@ -85,16 +83,15 @@ const ProductListing = () => {
           </div>
 
           {/* Price Range slider */}
-          <RangeSlider />
-
-          <FabricFilter onFabricFilter={onFabricFilter} />
+          <RangeSlider max={maxPrice} min={minPrice} />
+          <div>Colors</div>
         </aside>
 
         {/* ---------- Product Grid ---------- */}
         <main className="md:col-span-3">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-gray-700">
-              {filteredProducts?.length} Products
+              {selectedProducts?.length} Products
             </h2>
             <FormControl
               variant="outlined"
@@ -133,9 +130,10 @@ const ProductListing = () => {
 
           {/* Product Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((item) => (
-              <ProductCard key={item.id} item={item} />
-            ))}
+            {selectedProducts &&
+              selectedProducts.map((item) => (
+                <ProductCard key={item.id} item={item} />
+              ))}
           </div>
         </main>
       </div>

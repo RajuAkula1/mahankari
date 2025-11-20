@@ -306,11 +306,7 @@ const sarees = [
   ...item29,
   ...item30,
 ];
-const dresses = [
-  ...item32,
-  ...item33,
-  ...item34,
-];
+const dresses = [...item32, ...item33, ...item34];
 const dupattas = [...item31];
 
 const trending = [...item26];
