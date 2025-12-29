@@ -18,67 +18,88 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 
 const initialProducts = [
   {
     id: 1,
-    name: "Tasty Metal Shirt",
+    productName: "Product name example",
     category: "Books",
+    images: [],
+    brand: "Brand A",
     sku: "SKU-52442",
     stock: 30,
     price: 410,
-    rating: 3.5,
-    reviews: 14,
-    status: "Pending",
-    statusColor: "warning",
+    discount: 10,
+    discountedPrice: 369,
+    specifications: "specifications",
+    featured: "featured",
+    variants: "variants",
+    description: "description",
   },
   {
     id: 2,
-    name: "Modern Gloves",
-    category: "Kids",
-    sku: "SKU-98424",
-    stock: 0,
-    price: 340,
-    rating: 4.5,
-    reviews: 9,
-    status: "Draft",
-    statusColor: "default",
+    productName: "Product name example",
+    category: "Books",
+    images: [],
+    brand: "Brand A",
+    sku: "SKU-52442",
+    stock: 30,
+    price: 410,
+    discount: 10,
+    discountedPrice: 369,
+    specifications: "specifications",
+    featured: "featured",
+    variants: "variants",
+    description: "description",
   },
   {
     id: 3,
-    name: "Rustic Steel Computer",
-    category: "Games",
-    sku: "SKU-78192",
-    stock: 50,
-    price: 948,
-    rating: 3.8,
-    reviews: 19,
-    status: "Draft",
-    statusColor: "default",
+    productName: "Product name example",
+    category: "Books",
+    images: [],
+    brand: "Brand A",
+    sku: "SKU-52442",
+    stock: 30,
+    price: 410,
+    discount: 10,
+    discountedPrice: 369,
+    specifications: "specifications",
+    featured: "featured",
+    variants: "variants",
+    description: "description",
   },
   {
     id: 4,
-    name: "Licensed Concrete Cheese",
-    category: "Electronics",
-    sku: "SKU-86229",
-    stock: 0,
-    price: 853,
-    rating: 2.5,
-    reviews: 5,
-    status: "Pending",
-    statusColor: "warning",
+    productName: "Product name example",
+    category: "Books",
+    images: [],
+    brand: "Brand A",
+    sku: "SKU-52442",
+    stock: 30,
+    price: 410,
+    discount: 10,
+    discountedPrice: 369,
+    specifications: "specifications",
+    featured: "featured",
+    variants: "variants",
+    description: "description",
   },
   {
     id: 5,
-    name: "Electronic Rubber Table",
+    productName: "Product name example",
     category: "Books",
-    sku: "SKU-89762",
-    stock: 18,
-    price: 881,
-    rating: 4.0,
-    reviews: 12,
-    status: "Publish",
-    statusColor: "success",
+    images: [],
+    brand: "Brand A",
+    sku: "SKU-52442",
+    stock: 30,
+    price: 410,
+    discount: 10,
+    discountedPrice: 369,
+    specifications: "specifications",
+    featured: "featured",
+    variants: "variants",
+    description: "description",
   },
 ];
 
@@ -98,9 +119,10 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const navigate = useNavigate();
 
   const filteredProducts = initialProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleChangePage = (event, newPage) => {
@@ -127,7 +149,11 @@ const Products = () => {
           <Button variant="outlined" sx={{ mr: 1 }}>
             Export
           </Button>
-          <Button variant="contained" startIcon={<AddIcon />}>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate("/products/add")}
+          >
             Add Product
           </Button>
         </Box>
@@ -149,10 +175,10 @@ const Products = () => {
             <TableRow>
               <TableCell>Product</TableCell>
               <TableCell>SKU</TableCell>
-              <TableCell>Stock</TableCell>
               <TableCell>Price</TableCell>
-              <TableCell>Rating</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell align="center">Discount</TableCell>
+              <TableCell align="center">Discounted Price</TableCell>
+              <TableCell>Stock</TableCell>
               <TableCell align="center">Edit</TableCell>
             </TableRow>
           </TableHead>
@@ -162,37 +188,45 @@ const Products = () => {
               .map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
-                    <Typography fontWeight={500}>{product.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {product.category}
-                    </Typography>
+                    <div>
+                      <div style={{ float: "left", marginRight: 10 }}>
+                        <img
+                          src={
+                            product.images[0] ||
+                            "http://localhost:5000/src/assets/logo2.png"
+                          }
+                          alt={product.productName}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            objectFit: "cover",
+                            borderRadius: 4,
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <Typography fontWeight={500}>
+                          {product.productName}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {product.category}
+                        </Typography>
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>{product.sku}</TableCell>
-                  <TableCell>
-                    <StockChip
-                      label={
-                        product.stock === 0
-                          ? "Out of stock"
-                          : product.stock < 20
-                          ? `${product.stock} low stock`
-                          : `${product.stock} in stock`
-                      }
-                      stock={product.stock}
-                    />
-                  </TableCell>
-                  <TableCell>${product.price.toFixed(2)}</TableCell>
-                  <TableCell>
-                    {product.rating} ★ ({product.reviews})
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={product.status}
-                      color={product.statusColor}
-                      size="small"
-                    />
+                  <TableCell>{product.price.toFixed(2)}</TableCell>
+                  <TableCell align="center">
+                    {product.discount.toFixed(2)}
                   </TableCell>
                   <TableCell align="center">
-                    <IconButton>
+                    {product.discountedPrice.toFixed(2)}
+                  </TableCell>
+                  <TableCell>{product.discountedPrice.toFixed(2)}</TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      onClick={() => navigate(`/products/edit/${product.id}`)}
+                    >
                       <EditIcon />
                     </IconButton>
                   </TableCell>

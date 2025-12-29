@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -10,12 +10,96 @@ import {
 } from "@mui/material";
 
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 
-export default function AddProduct() {
+export default function EditProducts() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const initialProducts = [
+    {
+      id: 1,
+      productName: "Product name example",
+      category: "Books",
+      images: [],
+      brand: "Brand A",
+      sku: "SKU-52442",
+      stock: 30,
+      price: 410,
+      discount: 10,
+      discountedPrice: 369,
+      specifications: "specifications",
+      featured: "featured",
+      variants: "variants",
+      description: "description",
+    },
+    {
+      id: 2,
+      productName: "Product name example",
+      category: "Books",
+      images: [],
+      brand: "Brand A",
+      sku: "SKU-52442",
+      stock: 30,
+      price: 410,
+      discount: 10,
+      discountedPrice: 369,
+      specifications: "specifications",
+      featured: "featured",
+      variants: "variants",
+      description: "description",
+    },
+    {
+      id: 3,
+      productName: "Product name example",
+      category: "Books",
+      images: [],
+      brand: "Brand A",
+      sku: "SKU-52442",
+      stock: 30,
+      price: 410,
+      discount: 10,
+      discountedPrice: 369,
+      specifications: "specifications",
+      featured: "featured",
+      variants: "variants",
+      description: "description",
+    },
+    {
+      id: 4,
+      productName: "Product name example",
+      category: "Books",
+      images: [],
+      brand: "Brand A",
+      sku: "SKU-52442",
+      stock: 30,
+      price: 410,
+      discount: 10,
+      discountedPrice: 369,
+      specifications: "specifications",
+      featured: "featured",
+      variants: "variants",
+      description: "description",
+    },
+    {
+      id: 5,
+      productName: "Product name example",
+      category: "Books",
+      images: [],
+      brand: "Brand A",
+      sku: "SKU-52442",
+      stock: 30,
+      price: 410,
+      discount: 10,
+      discountedPrice: 369,
+      specifications: "specifications",
+      featured: "featured",
+      variants: "variants",
+      description: "description",
+    },
+  ];
 
   const [form, setForm] = useState({
     productName: "",
@@ -33,6 +117,38 @@ export default function AddProduct() {
   });
 
   const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    fetchProduct(id);
+  }, [id]);
+
+  const fetchProduct = async (productId) => {
+    try {
+      // Filter from local initialProducts based on id
+      const product = initialProducts.find((p) => p.id === parseInt(productId));
+      if (product) {
+        setForm({
+          productName: product.productName || "",
+          sku: product.sku || "",
+          brand: product.brand || "",
+          price: product.price || "",
+          discount: product.discount || "",
+          discountedPrice: product.discountedPrice || "",
+          category: product.category || "",
+          stock: product.stock || "",
+          specifications: product.specifications || "",
+          featured: product.featured || "",
+          variants: product.variants || "",
+          description: product.description || "",
+        });
+        setImages(product.images || []);
+      } else {
+        alert("Product not found");
+      }
+    } catch (err) {
+      alert("Failed to fetch product");
+    }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -55,33 +171,10 @@ export default function AddProduct() {
     try {
       setLoading(true);
 
-      const formData = new FormData();
-      formData.append("productName", form.productName);
-      formData.append("sku", form.sku);
-      formData.append("brand", form.brand);
-      formData.append("price", form.price);
-      formData.append("discount", form.discount);
-      formData.append("discountedPrice", form.discountedPrice);
-      formData.append("category", form.category);
-      formData.append("stock", form.stock);
-      formData.append("specifications", form.specifications);
-      formData.append("featured", form.featured);
-      formData.append("variants", form.variants);
-      formData.append("description", form.description);
-
-      images.forEach((image, index) => {
-        formData.append(`images`, image);
-      });
-
-      await api.post("/products", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      alert("Product created successfully");
+      // For demo, just alert success without API call
+      alert("Product updated successfully");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create product");
+      alert("Failed to update product");
     } finally {
       setLoading(false);
     }
@@ -98,7 +191,7 @@ export default function AddProduct() {
       >
         <Box>
           <Typography variant="h4" fontWeight={700}>
-            Create Product
+            Edit Product
           </Typography>
         </Box>
 
@@ -278,7 +371,7 @@ export default function AddProduct() {
       <Box p={3} display="flex" justifyContent="flex-end" gap={2}>
         <Button variant="outlined">Save as Draft</Button>
         <Button variant="contained" onClick={handleSubmit} disabled={loading}>
-          Create Product
+          Update Product
         </Button>
       </Box>
     </Box>
